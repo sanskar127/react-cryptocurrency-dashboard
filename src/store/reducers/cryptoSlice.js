@@ -3,7 +3,16 @@ import axios from 'axios';
 
 export const fetchPrices = createAsyncThunk('crypto/fetchPrices', async () => {
   const response = await axios.get(
-    'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,ripple&vs_currencies=usd'
+    'https://api.coingecko.com/api/v3/coins/markets',
+    {
+      params: {
+        vs_currency: 'usd',
+        order: 'market_cap_desc',
+        per_page: 100,
+        page: 1,
+        sparkline: false
+      }
+    }
   );
   return response.data;
 });
@@ -11,11 +20,15 @@ export const fetchPrices = createAsyncThunk('crypto/fetchPrices', async () => {
 const cryptoSlice = createSlice({
   name: 'crypto',
   initialState: {
-    prices: {},
+    prices: [],
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setSearchTerm(state, action) {
+      state.searchTerm = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPrices.pending, (state) => {
@@ -33,4 +46,5 @@ const cryptoSlice = createSlice({
   },
 });
 
+export const { setSearchTerm } = cryptoSlice.actions;
 export default cryptoSlice.reducer;
