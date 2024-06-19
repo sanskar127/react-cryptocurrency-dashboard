@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import trendingReducer from './reducers/trendingSlice';
+import homeReducer from './reducers/homeSlice';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
-    trending: trendingReducer,
+    home: homeReducer,
   },
 });
+
+export default store;

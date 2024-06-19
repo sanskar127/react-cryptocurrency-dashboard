@@ -1,39 +1,37 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchTrendingData } from '../../store/reducers/trendingSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { setQuery, fetchCoins, searchCoins } from '../../store/reducers/homeSlice';
 
-const Page = () => {
+function Page() {
   const dispatch = useDispatch();
-  const trendingData = useSelector(state => state.trending.data);
-  const status = useSelector(state => state.trending.status);
-  const error = useSelector(state => state.trending.error);
+  const { coins, query } = useSelector(state => state.home); // trendingCoins
+
+  const handleInputChange = (e) => {
+    dispatch(setQuery(e.target.value));
+    if (e.target.value.length > 2) {
+      dispatch(searchCoins(e.target.value));
+    } else {
+      dispatch(fetchCoins());
+    }
+  };
 
   useEffect(() => {
-    dispatch(fetchTrendingData());
+    dispatch(fetchCoins());
   }, [dispatch]);
-
-  if (status === 'loading') {
-    return <div>Loading...</div>;
-  }
-
-  if (status === 'failed') {
-    return <div>Error: {error}</div>;
-  }
-
-  console.log(trendingData)
 
   return (
     <div>
-      <h2>Trending Coins</h2>
+      <input type="text" value={query} onChange={handleInputChange} />
       <ul>
-        {trendingData.map(coin => (
+        {coins.map(coin => (
           <li key={coin.id}>
-            {coin.name} - {coin.priceBTC}
+            <img src={coin.image} alt={coin.name} />
+            {coin.name} - Price BTC: {coin.priceBTC}
           </li>
         ))}
       </ul>
     </div>
   );
-};
+}
 
 export default Page;
